@@ -4,21 +4,25 @@ const Schema = mongoose.Schema;
 
 // create user schema and model
 const UserSchema = new Schema({
-    firstName: {
+    fullName: {
         type: String,
-        required: [true, 'First name is required']
-    },
-    lastName: {
-        type: String,
-        required: [true, 'Last name is required']
+        required: [true, 'Full name is required']
     },
     email: {
         type: String,
-        required: [true, 'Email is required']
+        required: [true, 'Email is required'],
+        //unique: true
     },
     password: {
         type: String,
         required: [true, 'Password is required']
+    },
+    phoneNumber: {
+        type: String
+    },
+    role: {
+        type: String,
+        default: 'ADMIN'
     }
 });
 
