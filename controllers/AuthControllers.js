@@ -11,6 +11,53 @@ const validateEmail = (email) => {
     });
 }
 
+exports.createUser = (req, res, next) => {
+    validateEmail(req.body.email).then((valid) => {
+        if (valid) {
+            User.create({
+                fullName: req.body.fullName,
+                email: req.body.email,
+                password: req.body.password,
+                phoneNumber: req.body.phoneNumber
+            }, (err, result) => {
+                if (err) {
+                    next(error);
+                } else {
+                    res.json({
+                        message: 'User created. Go to the login page and sign in.'
+                    });
+                }
+            });
+        } else {
+            res.status(409).send({
+                message: 'This email is already in use.'
+            });
+        }
+    });
+}
+
+exports.login = (req, res, next) => {
+    User.findOne({
+        email: req.body.email
+    }, (err, user) => {
+        if (err || !user) {
+            res.status(401).send({
+                message: 'Invalid email or password.'
+            });
+            next(err);
+        } else {
+            if (req.body.password === user.password) {
+                res.json(user); //generateTokens(req, user)
+            } else {
+                res.status(401).send({
+                    message: 'Invalid email or password.'
+                });
+            }
+        }
+    });
+}
+
+// for future
 const generateTokens = (req, user) => {
     const ACCESS_TOKEN = jwt.sign({
         sub: user._id,
@@ -30,52 +77,6 @@ const generateTokens = (req, user) => {
         accessToken: ACCESS_TOKEN,
         refreshToken: REFRESH_TOKEN
     }
-}
-
-exports.createUser = (req, res, next) => {
-    validateEmail(req.body.email).then((valid) => {
-        if (valid) {
-            User.create({
-                fullName: req.body.fullName,
-                email: req.body.email,
-                password: req.body.password,
-                phoneNumber: req.body.phoneNumber
-            }, (err, result) => {
-                if (err) {
-                    next(error);
-                } else {
-                    res.json({
-                        message: 'User created'
-                    });
-                }
-            });
-        } else {
-            res.status(409).send({
-                message: 'The request failed'
-            });
-        }
-    });
-}
-
-exports.login = (req, res, next) => {
-    User.findOne({
-        email: req.body.email
-    }, (err, user) => {
-        if (err || !user) {
-            res.status(401).send({
-                message: 'Unauthorized'
-            });
-            next(err);
-        } else {
-            if (req.body.password === user.password) {
-                res.json(generateTokens(req, user));
-            } else {
-                res.status(401).send({
-                    message: 'Invalid email or password'
-                });
-            }
-        }
-    });
 }
 
 exports.accessTokenVerify = (req, res, next) => {
