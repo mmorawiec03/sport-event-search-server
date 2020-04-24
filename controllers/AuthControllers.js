@@ -6,13 +6,13 @@ const config = require('../Config');
 const validateEmail = (email) => {
     return User.findOne({
         email: email
-    }).then((result) => {
+    }).then(result => {
         return !result;
     });
 }
 
 exports.createUser = (req, res, next) => {
-    validateEmail(req.body.email).then((valid) => {
+    validateEmail(req.body.email).then(valid => {
         if (valid) {
             User.create({
                 fullName: req.body.fullName,
