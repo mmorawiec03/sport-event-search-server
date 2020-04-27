@@ -27,7 +27,7 @@ exports.deleteEvent = (req, res, next) => {
 
 exports.joinEvent = (req, res, next) => {
     Event.findOne({_id: req.params.id}).then(event => {
-        if (!event.participants.some(participant => participant.email === req.body.email)){
+        if (!event.participants.some(participant => participant.userId === req.body.userId)){
             event.participants.push(req.body);
             event.save(err => {
                 if (err)
