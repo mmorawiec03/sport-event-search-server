@@ -28,4 +28,7 @@ router.get('/events/joined/:userId', eventsControllers.getJoinedEvents);
 // get user owned events
 router.get('/events/owned/:userId', eventsControllers.getOwnedEvents);
 
+// get events by discipline
+router.get('/events/:discipline', eventsControllers.getEventsByDiscipline);
+
 module.exports = router;

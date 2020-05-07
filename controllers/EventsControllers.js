@@ -27,7 +27,11 @@ exports.deleteEvent = (req, res, next) => {
 
 exports.joinEvent = (req, res, next) => {
     Event.findOne({_id: req.params.id}).then(event => {
-        if (!event.participants.some(participant => participant.userId === req.body.userId)){
+        if (event.participants.some(participant => participant.userId === req.body.userId))
+            res.status(409).send({ message: 'You already participate the event.' });
+        else if (event.owner.userId === req.body.userId)
+            res.status(409).send({ message: 'You cannot join your own event.' });
+        else {
             event.participants.push(req.body);
             event.save(err => {
                 if (err)
@@ -35,8 +39,6 @@ exports.joinEvent = (req, res, next) => {
                 else
                     res.status(200).send({ message: 'You joined the event successfully.' });
             });
-        } else {
-            res.status(409).send({ message: 'You already participate the event.' });
         }
     });
 }
@@ -72,6 +74,12 @@ exports.getOwnedEvents = (req, res, next) => {
             return event.owner.userId === req.params.userId;
         });
         res.status(200).send(userEvents);
+    });
+}
+
+exports.getEventsByDiscipline = (req, res, next) => {
+    Event.find({ discipline: req.params.discipline }).then(events => {
+        res.status(200).send(events);
     });
 }
 
