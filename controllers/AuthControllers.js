@@ -47,7 +47,7 @@ exports.login = (req, res, next) => {
             next(err);
         } else {
             if (req.body.password === user.password) {
-                res.json(user); //generateTokens(req, user)
+                res.json(generateTokens(req, user)); //generateTokens(req, user)
             } else {
                 res.status(401).send({
                     message: 'Invalid email or password.'
@@ -57,7 +57,6 @@ exports.login = (req, res, next) => {
     });
 }
 
-// for future
 const generateTokens = (req, user) => {
     const ACCESS_TOKEN = jwt.sign({
         sub: user._id,
@@ -113,7 +112,7 @@ exports.refreshTokenVerify = (req, res, next) => {
             error: "Token is not complete" 
         });
     } 
-    jwt.verify(REFRESH_TOKEN[1], TOKEN_SECRET_JWT, (err, payload) => { 
+    jwt.verify(REFRESH_TOKEN[1], config.TOKEN_SECRET_JWT, (err, payload) => { 
         if (err) { 
             return res.status(401).send({ 
                 error: "Token refresh is not valid" 
