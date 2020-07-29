@@ -47,7 +47,7 @@ exports.login = (req, res, next) => {
             next(err);
         } else {
             if (req.body.password === user.password) {
-                res.json(generateTokens(req, user)); //generateTokens(req, user)
+                res.json({user: user, tokens: generateTokens(req, user)});
             } else {
                 res.status(401).send({
                     message: 'Invalid email or password.'
