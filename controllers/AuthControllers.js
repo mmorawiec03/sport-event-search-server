@@ -70,7 +70,7 @@ const generateTokens = (req, user) => {
         rol: user.role,
         type: 'REFRESH_TOKEN'
     }, config.TOKEN_SECRET_JWT, {
-        expiresIn: 480
+        expiresIn: 900
     });
     return {
         accessToken: ACCESS_TOKEN,

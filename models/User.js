@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phoneNumber: { type: String },
-    role: { type: String, default: 'ADMIN' }
+    role: { type: String, default: 'USER' }
 });
 
 const User = mongoose.model('user', UserSchema);
