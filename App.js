@@ -4,6 +4,15 @@ const mongoose = require('mongoose');
 const config = require('./Config');
 const eventsRoutes = require('./routes/EventsRoutes');
 const authRoutes = require('./routes/AuthRoutes');
+const fs = require('fs');
+const https = require('https');
+
+var key = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.key');
+var cert = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.crt');
+var options = {
+  key: key,
+  cert: cert
+};
 
 // set up express app
 const app = express();
@@ -33,7 +42,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+var server = https.createServer(options, app);
+
 // listen for requests
-app.listen(config.PORT_LISTEN, () => {
+server.listen(config.PORT_LISTEN, () => {
     console.log('Server listening...');
 });
