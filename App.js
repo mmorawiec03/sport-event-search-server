@@ -7,13 +7,6 @@ const authRoutes = require('./routes/AuthRoutes');
 const fs = require('fs');
 const https = require('https');
 
-var key = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.key');
-var cert = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.crt');
-var options = {
-  key: key,
-  cert: cert
-};
-
 // set up express app
 const app = express();
 
@@ -42,6 +35,15 @@ app.use((err, req, res, next) => {
     });
 });
 
+// set https options
+var key = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.key');
+var cert = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.crt');
+var options = {
+  key: key,
+  cert: cert
+};
+
+// set up https server
 var server = https.createServer(options, app);
 
 // listen for requests
