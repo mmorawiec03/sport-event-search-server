@@ -12,6 +12,9 @@ const validateEmail = (email) => {
 }
 
 exports.createUser = (req, res, next) => {
+    var remoteIpAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(`[INFO] Request from ${remoteIpAddress}: POST /auth/register`);
+
     validateEmail(req.body.email).then(valid => {
         if (valid) {
             User.create({
@@ -37,6 +40,9 @@ exports.createUser = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
+    var remoteIpAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(`[INFO] Request from ${remoteIpAddress}: POST /auth/login`);
+
     User.findOne({
         email: req.body.email
     }, (err, user) => {
@@ -100,7 +106,10 @@ exports.accessTokenVerify = (req, res, next) => {
     });
 }
 
-exports.refreshTokenVerify = (req, res, next) => { 
+exports.refreshTokenVerify = (req, res, next) => {
+    var remoteIpAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(`[INFO] Request from ${remoteIpAddress}: POST /auth/refresh`);
+
     if (!req.body.refreshToken) { 
         res.status(401).send({ 
             message: "Refresh token is missing" 

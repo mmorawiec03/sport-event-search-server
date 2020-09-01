@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const config = require('./Config');
 const eventsRoutes = require('./routes/EventsRoutes');
 const authRoutes = require('./routes/AuthRoutes');
-const fs = require('fs');
-const https = require('https');
+const ngrok = require('ngrok');
 
 // set up express app
 const app = express();
@@ -15,9 +14,9 @@ mongoose.connect(config.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-    console.log('MongoDB connected');
+    console.log('[INFO] MongoDB connected');
 }).catch((err) => {
-    console.log(`MongoDB connection error: ${err}`);
+    console.log(`[ERROR] MongoDB connection error: ${err}`);
 });
 
 // body-parser middlewares
@@ -35,18 +34,12 @@ app.use((err, req, res, next) => {
     });
 });
 
-// set https options
-var key = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.key');
-var cert = fs.readFileSync('D:/Studia/Inżynierka/keys/selfsigned.crt');
-var options = {
-  key: key,
-  cert: cert
-};
-
-// set up https server
-var server = https.createServer(options, app);
-
-// listen for requests
-server.listen(config.PORT_LISTEN, () => {
-    console.log('Server listening...');
+// connect ngrok and listen for requests
+app.listen(config.PORT_LISTEN, () => {
+    console.log('[INFO] Server listening...');
+    console.log('[INFO] Trying to create ngrok tunnel...');
+    (async function() {
+        const url = await ngrok.connect(config.PORT_LISTEN);
+        console.log(`[INFO] Tunnel created. Public server URL is: ${url}`);
+    })();
 });
