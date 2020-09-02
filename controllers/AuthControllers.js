@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('../Config');
+const bcrypt = require('bcrypt');
 
 
 const validateEmail = (email) => {
@@ -24,7 +25,7 @@ exports.createUser = (req, res, next) => {
                 phoneNumber: req.body.phoneNumber
             }, (err, result) => {
                 if (err) {
-                    next(error);
+                    next(err);
                 } else {
                     res.json({
                         message: 'User created. Go to the login page and sign in.'
@@ -52,13 +53,17 @@ exports.login = (req, res, next) => {
             });
             next(err);
         } else {
-            if (req.body.password === user.password) {
-                res.json({user: user, tokens: generateTokens(req, user)});
-            } else {
-                res.status(401).send({
-                    message: 'Invalid email or password.'
-                });
-            }
+            user.comparePassword(req.body.password, (err, isMatch) => {
+                if (err)
+                    throw err;
+                if (isMatch) {
+                    res.json({user: user, tokens: generateTokens(req, user)});
+                } else {
+                    res.status(401).send({
+                        message: 'Invalid email or password.'
+                    });
+                }
+            });
         }
     });
 }
