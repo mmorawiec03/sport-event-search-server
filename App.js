@@ -5,6 +5,7 @@ const config = require('./Config');
 const eventsRoutes = require('./routes/EventsRoutes');
 const authRoutes = require('./routes/AuthRoutes');
 const ngrok = require('ngrok');
+const RateLimit = require('express-rate-limit');
 
 // set up express app
 const app = express();
@@ -18,6 +19,15 @@ mongoose.connect(config.MONGO_URI, {
 }).catch((err) => {
     console.log(`[ERROR] MongoDB connection error: ${err}`);
 });
+
+var limiter = new RateLimit({
+  windowMs: 1*60*1000,
+  max: 20,
+  delayMs: 0
+});
+
+app.enable('trust proxy');  
+app.use(limiter);
 
 // body-parser middlewares
 app.use(bodyParser.json());
