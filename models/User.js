@@ -7,7 +7,10 @@ const SALT_WORK_FACTOR = 10;
 const UserSchema = new Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String,
+                required: true,
+                validate: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#()_])[A-Za-z\d@$!%*?&#()_]{8,}$/
+            },
     phoneNumber: { type: String },
     role: { type: String, default: 'USER' }
 });
